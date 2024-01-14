@@ -121,7 +121,7 @@ CMD ["World"]
 ```
 *- первая выполнится `ENTRYPOINT ["bash", "script.sh"]`, а в качестве аргумента по умолчанию в скрипт `script.sh` будет принято `CMD ["World"]`.*
 
-*doc:https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact*
+*https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact - docs*
 
 `VOLUME` - для переноса/сохранения файлов из контейнера в файловую систему.
 - монтирование папок, находящихся в специально отведенном месте(хранилище docker) -`/var/lib/docker/volumes/` 
@@ -237,8 +237,8 @@ docker run --rm -d \
 *- разворачиваем бэк с указыванием сети `db_net`. `HOST=postgres_database` переменная окружения(имя хоста) для коннекта к БД (строчка из скрипта для коннекта к БД -`host:os.environ.get("HOST"),`).  
 Пример взят из https://lab.karpov.courses/learning/102/ 6 урок 7 лекция)*  
 Полезные ссылки по сетям docker:  
-https://docs.docker.com/network/  
-https://habr.com/ru/articles/333874/
+*https://docs.docker.com/network/  - docs*   
+*https://habr.com/ru/articles/333874/*
 
 
 ---
@@ -278,3 +278,116 @@ https://habr.com/ru/articles/333874/
 
 `:wq!`- сохранение файла и выход из редактора`vi`.  
 
+---
+---
+### Docker-compose  
+*https://docs.docker.com/engine/reference/commandline/compose/ - docs*  
+
+Инструмент для запуска многоконтейнерных приложений docker, описывающие как должны подниматься приложение и их взаимодействие.  
+Для работы с Docker-compose необходимо находиться в той же папки с файлом. 
+#### + команды Docker для  Docker-compose.yml:
+`docker-compose up` - поднять контейнеры из файла Docker-compose.yml. 
+`docker-compose up -d` — поднять контейнеры из файла Docker-compose.yml в фоновом режиме.
+`docker-compose stop` — остановить поднятые контейнеры.
+`docker-compose start` — запустить остановленные контейнеры.
+`docker-compose ps` - вывод всех docker-compose.
+`docker-compose down` - останавливает все docker-compose и удаляет.  
+*Внимание! Все созданные volume останутся после команды `docker-compose down`*
+#### + синтаксис .yml:
+Состоит из `<ключ>:<значение>` и отступов для разделения на блоки(отступы).  
+
+Примеры:   
+Запись в .yml:   
+```
+name:Petr 
+age:32  
+```
+Вид:  
+`{'name': 'Petr', 'age': 32}`
+
+Запись в .yml: 
+```
+name: Petr Olga  
+
+    или  
+
+name:
+    Petr
+    Olga  
+```
+Вид:  
+`{'name': 'Petr Olga'}`
+
+Запись в .yml:
+```
+name: |
+    Petr
+    Olga
+```
+Вид:  
+`{'name': 'Petr\nOlga\n'}`
+
+Запись в .yml:
+```
+name: 
+    - Petr
+    - Olga  
+```
+Вид:  
+`{'name': ['Petr', 'Olga']}`
+
+Запись в .yml:  
+```
+name: 
+    - Petr: 32
+    - Olga: 32
+```
+Вид:  
+`{'name': [{'Petr': 32}, {'Olga': 32}]}`  
+
+Запись в .yml:  
+```
+name: 
+    - Petr: 32
+      Olga: 32
+    - Oleg: 32
+      Yana: 32
+```
+Вид:  
+`{'name': [{'Petr': 32, 'Olga': 32}, {'Oleg': 32, 'Yana': 32}]}`
+
+#### + шаблоны в .yml:
+`&` - обозначает "якорь" (то что используется несколько раз)
+`<<: *` - ссылка на "якорь" ()
+
+Запись в .yml связки `&` и `<<: *`:  
+```
+junior:
+    &junior 
+    position: junior
+    salary: 55000
+    
+team:
+    backend:
+        - Peter:
+            <<: *junior
+        - Olga:
+            <<: *junior    
+```
+Вид:  
+```
+{
+    'junior': 
+        {'position': 'junior', 'salary': 55000}  
+}
+
+
+{
+    team': {
+        'backend': [
+            {'Peter': {'position': 'junior', 'salary': 55000}}, 
+            {'Yana': {'position': 'junior', 'salary': 55000}}
+        ]
+    }
+}
+```
