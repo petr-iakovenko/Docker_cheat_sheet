@@ -201,6 +201,44 @@ docker run --rm -it -e APP_TOKEN=x ....
 
 `HEALTHCHECK` - ....  
 
+`docker network ls` - получение списка сетей(в т.ч. кастомных). 
+```
+docker run -d --rm --name <имя_конетйнера> --net=<тип_сети> <имя_образа>
+```
+*- где `--net=<тип_сети>` указывает на тип сети*  
+**Виды сетей**  
+`none` -  .  
+`host` -  .   
+`bridge` - (по умолчанию) неудобно, что приходится выяснять ip-адреса контейнеров.  
+**Кастомные сети**  
+`docker inspect <название_или_ID_объекта>` — получить информацию об объектах докера (контейнер, образ, вольюм, сеть)
+`docker network create <имя_сети>` - создает новую сеть.  
+`docker network rm <имя_сети>` - удалить указанную сеть.  
+*Пример:  
+Связь друх контейнеров с друг другом*
+```
+docker run --rm -d \
+--name postgres_database \
+--net=db_net \
+-e POSTGRES_USER=user_docker \
+-e POSTGRES_PASSWORD=user_docker \
+-e POSTGRES_DB=user_docker \
+postgres:latest 
+```
+*- разворачиваем БД Postgres в кастомной сети `db_net`. Не указывали порт*
+```
+docker run --rm -d \
+--name back_end \
+--net=db_net \
+-p 8000:8000 \ 
+-e HOST=postgres_database \
+6_back
+```
+*- разворачиваем бэк с указыванием сети `db_net`. `HOST=postgres_database` переменная окружения(имя хоста) для коннекта к БД (строчка из скрипта для коннекта к БД -`host:os.environ.get("HOST"),`).  
+Пример взят из https://lab.karpov.courses/learning/102/ 6 урок 7 лекция)*  
+Полезные ссылки по сетям docker:  
+https://docs.docker.com/network/  
+https://habr.com/ru/articles/333874/
 
 
 ---
