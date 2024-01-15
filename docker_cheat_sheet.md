@@ -199,8 +199,8 @@ docker run --rm -it -e APP_TOKEN=x ....
 *- где `-e` является объявлением переменной `TOKEN=x`.  
 в терминале можно прочитать значение `x` с помощью `echo $TOKEN`.*  
 
-`HEALTHCHECK` - ....  
 
+#### + прописываение сетей для взаимодействия между контейнерами и хостом
 `docker network ls` - получение списка сетей(в т.ч. кастомных). 
 ```
 docker run -d --rm --name <имя_конетйнера> --net=<тип_сети> <имя_образа>
@@ -282,7 +282,7 @@ docker run --rm -d \
 ---
 ### Docker-compose  
 *https://docs.docker.com/engine/reference/commandline/compose/ - docs*  
-
+*https://docs.docker.com/compose/compose-file/compose-file-v3/ - docs*  
 Инструмент для запуска многоконтейнерных приложений docker, описывающие как должны подниматься приложение и их взаимодействие.  
 Для работы с Docker-compose необходимо находиться в той же папки с файлом. 
 #### + команды Docker для  Docker-compose.yml:
@@ -391,3 +391,46 @@ team:
     }
 }
 ```
+
+`healthcheck ... ` - инструкции, которые Docker может использовать для проверки работоспособности запущенного контейнера. Используется в Docker-compose.   
+
+*Пример из docker-compose:*
+```
+healthcheck:
+    test: ["CMD", "curl", "--fail", "localhost:8000/test"]
+    interval: 5s
+    timeout: 5s
+    retries: 3 
+```
+
+`deploy/replicas ...` - — указываем количество контейнеров у сервиса.
+`depends_on ...` — определяем зависимость между сервисами.
+`restart ...` — указываем поведение сервиса при падении.
+
+**Документация по docker-compose:**
+
+docker-compose - https://docs.docker.com/compose/compose-file/ 
+
+build - https://docs.docker.com/compose/compose-file/#build
+
+image - https://docs.docker.com/compose/compose-file/#image
+
+container_name - https://docs.docker.com/compose/compose-file/#container_name
+
+volumes - https://docs.docker.com/compose/compose-file/#volumes
+
+environment - https://docs.docker.com/compose/compose-file/#environment
+
+networks - https://docs.docker.com/compose/compose-file/#networks
+
+ports - https://docs.docker.com/compose/compose-file/#ports
+
+restart - https://docs.docker.com/compose/compose-file/#restart
+
+deploy - https://docs.docker.com/compose/compose-file/#deploy
+
+replicas - https://docs.docker.com/compose/compose-file/deploy/#replicas
+
+depends_on - https://docs.docker.com/compose/compose-file/#depends_on
+
+healthcheck - https://docs.docker.com/compose/compose-file/#healthcheck
